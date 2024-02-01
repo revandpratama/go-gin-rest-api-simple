@@ -10,6 +10,7 @@ import (
 
 type AuthService interface {
 	Register(req *dto.RegisterRequest) error
+	Login(req *dto.LoginRequest) (*dto.LoginResponse, error)
 }
 
 type authService struct {
@@ -49,4 +50,30 @@ func (s *authService) Register(req *dto.RegisterRequest) error {
 	}
 
 	return nil
+}
+
+func (s *authService) Login(req *dto.LoginRequest) (*dto.LoginResponse, error) {
+	var data dto.LoginResponse
+
+	user, err := s.repository.GetUserByEmail(req.Email)
+	if err != nil {
+		return nil, &errorhandler.NotFoundError{Message: "Wrong Credentials"}
+	}
+
+	if err := helpers.VerifyPassword(user.Password, req.Password); err != nil {
+		return nil, &errorhandler.NotFoundError{Message: "Wrong Credentials"}
+	}
+
+	token, err := helpers.GenerateToken(user)
+	if err != nil {
+		return nil, &errorhandler.InternalServerError{Message: err.Error()}
+	}
+
+	data = dto.LoginResponse{
+		ID:    user.Id,
+		Name:  user.Name,
+		Token: token,
+	}
+
+	return &data, nil
 }

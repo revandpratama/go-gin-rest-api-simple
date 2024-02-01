@@ -8,7 +8,13 @@ type RegisterRequest struct {
 	Gender               string `json:"gender"`
 }
 
-type LoginModel struct {
+type LoginRequest struct {
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`
+}
+
+type LoginResponse struct {
+	ID    int `json:"id"`
+	Name  string `json:"name"`
+	Token string `json:"token"`
 }

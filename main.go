@@ -6,11 +6,10 @@ import (
 	"go-gin-tutorial/routes"
 
 	"github.com/gin-gonic/gin"
-	// "net/http"
 )
 
-
 func main() {
+
 	config.LoadConfig();
 	config.LoadDB();
 	fmt.Println("Config and Database Configuration running...")
@@ -19,13 +18,14 @@ func main() {
 	api := router.Group("/api")
 
 	routes.AuthRouter(api);
+	routes.PostRouter(api);
 
 	api.GET("/test", Index)
 
 	addressStr := fmt.Sprintf("localhost:%v", config.ENV.PORT)
 	router.Run(addressStr)
 	fmt.Println("Running in port = ", config.ENV.PORT);
-	
+
 }
 
 func Index(g *gin.Context) {
@@ -35,5 +35,3 @@ func Index(g *gin.Context) {
 		"message": "test",
 	})
 }
-
-
