@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -31,14 +32,13 @@ func (h *postHandler) All(g *gin.Context) {
 		errorhandler.HandleError(g, &errorhandler.InternalServerError{Message: "Internal Server error"})
 		return
 	}
-	res, err := h.service.GetAll(id.(int)); 
+	res, err := h.service.GetAll(id.(int))
 	if err != nil {
 		errorhandler.HandleError(g, &errorhandler.NotFoundError{Message: err.Error()})
 		return
 	}
 
 	g.JSON(http.StatusOK, res)
-
 
 }
 func (h *postHandler) Create(g *gin.Context) {
@@ -80,4 +80,17 @@ func (h *postHandler) Create(g *gin.Context) {
 	})
 
 	g.JSON(http.StatusCreated, res)
+}
+
+func (h *postHandler) Show(g *gin.Context) {
+	postIdStr := g.Param("id")
+	postId, _ := strconv.Atoi(postIdStr)
+
+	post, err := h.service.Show(postId)
+	if err != nil {
+		errorhandler.HandleError(g, err)
+		return
+	}
+
+	g.JSON(http.StatusOK, post)
 }

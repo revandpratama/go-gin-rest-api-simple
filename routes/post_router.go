@@ -21,4 +21,5 @@ func PostRouter(api *gin.RouterGroup) {
 
 	r.POST("/", postHandler.Create)
 	r.GET("/", postHandler.All)
+	r.GET("/:id", postHandler.Show)
 }

@@ -8,8 +8,9 @@ import (
 
 type PostRepository interface {
 	Create(post *entity.Post) error
-	GetPostById(id int) (*[]entity.Post, error)
-	GetUserById(id int) (*entity.User, error)
+	GetPostByUser(userId int) (*[]entity.Post, error)
+	GetUserById(userId int) (*entity.User, error)
+	GetPostById(postId int) (*entity.Post, error)
 }
 
 type postRepository struct {
@@ -27,9 +28,9 @@ func (r *postRepository) Create(post *entity.Post) error {
 	return err
 }
 
-func (r *postRepository) GetPostById(id int) (*[]entity.Post, error) {
+func (r *postRepository) GetPostByUser(userId int) (*[]entity.Post, error) {
 	var post []entity.Post
-	err := r.db.Where("user_id  = ?", id).Find(&post).Error
+	err := r.db.Where("user_id  = ?", userId).Find(&post).Error
 
 	if err != nil {
 		return nil, err
@@ -38,10 +39,18 @@ func (r *postRepository) GetPostById(id int) (*[]entity.Post, error) {
 	return &post, nil
 }
 
-func (r postRepository) GetUserById(id int) (*entity.User, error) {
+func (r *postRepository) GetUserById(userId int) (*entity.User, error) {
 	var user entity.User
 
-	err := r.db.First(&user, "id = ?", id).Error
+	err := r.db.First(&user, "id = ?", userId).Error
 
 	return &user, err
+}
+
+func (r *postRepository) GetPostById(postId int) (*entity.Post, error) {
+	var post entity.Post
+
+	err := r.db.First(&post, "id = ?", postId).Error
+
+	return &post, err
 }

@@ -10,6 +10,7 @@ import (
 type PostService interface {
 	Create(req *dto.PostRequest) error
 	GetAll(id int) (*[]dto.PostResponse, error)
+	Show(postId int) (*dto.PostResponse, error)
 }
 
 type postService struct {
@@ -38,10 +39,10 @@ func (s *postService) Create(req *dto.PostRequest) error {
 	return nil
 }
 
-func (s *postService) GetAll(id int) (*[]dto.PostResponse, error) {
+func (s *postService) GetAll(userId int) (*[]dto.PostResponse, error) {
 	var res []dto.PostResponse
-	user, err := s.repository.GetUserById(id)
-	posts, err := s.repository.GetPostById(id)
+	user, err := s.repository.GetUserById(userId)
+	posts, err := s.repository.GetPostByUser(userId)
 	if err != nil {
 		return nil, &errorhandler.NotFoundError{Message: err.Error()}
 	}
@@ -60,6 +61,31 @@ func (s *postService) GetAll(id int) (*[]dto.PostResponse, error) {
 			CreatedAt:  post.CreatedAt,
 			UpdatedAt:  post.UpdatedAt,
 		})
+	}
+
+	return &res, nil
+}
+
+func (s *postService) Show(postId int) (*dto.PostResponse, error) {
+	var res dto.PostResponse
+	post, err := s.repository.GetPostById(postId)
+	if err != nil {
+		return nil, &errorhandler.NotFoundError{Message: err.Error()}
+	}
+
+	user, err := s.repository.GetUserById(post.UserID)
+	res = dto.PostResponse{
+		ID:     post.ID,
+		UserID: post.UserID,
+		User: dto.User{
+			ID:    user.Id,
+			Name:  user.Name,
+			Email: user.Email,
+		},
+		Tweet:      post.Tweet,
+		PictureUrl: post.PictureUrl,
+		CreatedAt:  post.CreatedAt,
+		UpdatedAt:  post.UpdatedAt,
 	}
 
 	return &res, nil
