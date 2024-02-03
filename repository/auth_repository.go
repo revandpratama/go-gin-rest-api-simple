@@ -3,7 +3,7 @@ package repository
 import (
 	"go-gin-tutorial/config"
 	"go-gin-tutorial/entity"
-	
+
 	"gorm.io/gorm"
 )
 
@@ -44,3 +44,4 @@ func (r *authRepository) GetUserByEmail(email string) (*entity.User, error) {
 
 	return &user, err
 }
+

@@ -10,7 +10,7 @@ type PostResponse struct {
 	UserID     int       `json:"-"`
 	User       User      `gorm:"foreignKey:UserID" json:"user"`
 	Tweet      string    `json:"tweet"`
-	PictureUrl string    `json:"picture_url"`
+	PictureUrl *string   `json:"picture_url"`
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
 }
@@ -22,7 +22,7 @@ type PostRequest struct {
 }
 
 type User struct {
-	ID    int `json:"id"`
-	Name  int `json:"name"`
-	Email int `json:"email"`
+	ID    int    `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
 }
