@@ -9,6 +9,7 @@ import (
 
 type PostService interface {
 	Create(req *dto.PostRequest) error
+	GetAll(id int) (*[]dto.PostResponse, error)
 }
 
 type postService struct {
@@ -35,4 +36,31 @@ func (s *postService) Create(req *dto.PostRequest) error {
 		return &errorhandler.InternalServerError{Message: err.Error()}
 	}
 	return nil
+}
+
+func (s *postService) GetAll(id int) (*[]dto.PostResponse, error) {
+	var res []dto.PostResponse
+	user, err := s.repository.GetUserById(id)
+	posts, err := s.repository.GetPostById(id)
+	if err != nil {
+		return nil, &errorhandler.NotFoundError{Message: err.Error()}
+	}
+
+	for _, post := range *posts {
+		res = append(res, dto.PostResponse{
+			ID:     post.ID,
+			UserID: post.UserID,
+			User: dto.User{
+				ID:    user.Id,
+				Name:  user.Name,
+				Email: user.Email,
+			},
+			Tweet:      post.Tweet,
+			PictureUrl: post.PictureUrl,
+			CreatedAt:  post.CreatedAt,
+			UpdatedAt:  post.UpdatedAt,
+		})
+	}
+
+	return &res, nil
 }

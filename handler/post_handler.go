@@ -25,7 +25,20 @@ func NewPostHandler(s service.PostService) *postHandler {
 }
 
 func (h *postHandler) All(g *gin.Context) {
-	// @Description get all posts
+	// @Description get all posts byt user
+	id, ok := g.Get("userID")
+	if !ok {
+		errorhandler.HandleError(g, &errorhandler.InternalServerError{Message: "Internal Server error"})
+		return
+	}
+	res, err := h.service.GetAll(id.(int)); 
+	if err != nil {
+		errorhandler.HandleError(g, &errorhandler.NotFoundError{Message: err.Error()})
+		return
+	}
+
+	g.JSON(http.StatusOK, res)
+
 
 }
 func (h *postHandler) Create(g *gin.Context) {
@@ -44,8 +57,8 @@ func (h *postHandler) Create(g *gin.Context) {
 
 		ext := filepath.Ext(post.Picture.Filename)
 		newFileName := uuid.New().String() + ext
-		fmt.Println("This is filepath Base : ",filepath.Base(newFileName))
-		fmt.Println("This is without filepath base : ",newFileName)
+		fmt.Println("This is filepath Base : ", filepath.Base(newFileName))
+		fmt.Println("This is without filepath base : ", newFileName)
 		//save image to directory
 		dst := filepath.Join("public/picture", filepath.Base(newFileName))
 		g.SaveUploadedFile(post.Picture, dst)
