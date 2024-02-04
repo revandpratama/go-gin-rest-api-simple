@@ -27,6 +27,9 @@ func NewPostHandler(s service.PostService) *postHandler {
 
 func (h *postHandler) All(g *gin.Context) {
 	// @Description get all posts byt user
+
+	// username := g.Param("username")
+
 	id, ok := g.Get("userID")
 	if !ok {
 		errorhandler.HandleError(g, &errorhandler.InternalServerError{Message: "Internal Server error"})
@@ -86,7 +89,9 @@ func (h *postHandler) Show(g *gin.Context) {
 	postIdStr := g.Param("id")
 	postId, _ := strconv.Atoi(postIdStr)
 
-	post, err := h.service.Show(postId)
+	postUsername := g.Param("username")
+
+	post, err := h.service.Show(postUsername, postId)
 	if err != nil {
 		errorhandler.HandleError(g, err)
 		return

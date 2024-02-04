@@ -10,7 +10,7 @@ import (
 type PostService interface {
 	Create(req *dto.PostRequest) error
 	GetAll(id int) (*[]dto.PostResponse, error)
-	Show(postId int) (*dto.PostResponse, error)
+	Show(postUsername string, postId int) (*dto.PostResponse, error)
 }
 
 type postService struct {
@@ -66,9 +66,9 @@ func (s *postService) GetAll(userId int) (*[]dto.PostResponse, error) {
 	return &res, nil
 }
 
-func (s *postService) Show(postId int) (*dto.PostResponse, error) {
+func (s *postService) Show(postUsername string, postId int) (*dto.PostResponse, error) {
 	var res dto.PostResponse
-	post, err := s.repository.GetPostById(postId)
+	post, err := s.repository.GetPostById(postUsername, postId)
 	if err != nil {
 		return nil, &errorhandler.NotFoundError{Message: err.Error()}
 	}

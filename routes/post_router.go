@@ -20,6 +20,6 @@ func PostRouter(api *gin.RouterGroup) {
 	r.Use(middleware.JWTMiddleware())
 
 	r.POST("/", postHandler.Create)
-	r.GET("/", postHandler.All)
-	r.GET("/:id", postHandler.Show)
+	r.GET("/:username", postHandler.All)
+	r.GET("/:username/:id", postHandler.Show)
 }

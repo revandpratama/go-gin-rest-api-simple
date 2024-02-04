@@ -10,7 +10,7 @@ type PostRepository interface {
 	Create(post *entity.Post) error
 	GetPostByUser(userId int) (*[]entity.Post, error)
 	GetUserById(userId int) (*entity.User, error)
-	GetPostById(postId int) (*entity.Post, error)
+	GetPostById(postUsername string, postId int) (*entity.Post, error)
 }
 
 type postRepository struct {
@@ -47,10 +47,14 @@ func (r *postRepository) GetUserById(userId int) (*entity.User, error) {
 	return &user, err
 }
 
-func (r *postRepository) GetPostById(postId int) (*entity.Post, error) {
+func (r *postRepository) GetPostById(username string, postId int) (*entity.Post, error) {
 	var post entity.Post
+	var user entity.User
 
-	err := r.db.First(&post, "id = ?", postId).Error
+	if err := r.db.First(&user, "username = ?", username).Error; err != nil {
+		return nil, err
+	}
+	err := r.db.Where("id = ?", postId).Where("user_id = ?", user.Id).First(&post).Error
 
 	return &post, err
 }

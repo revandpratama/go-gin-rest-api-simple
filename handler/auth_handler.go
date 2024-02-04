@@ -44,21 +44,21 @@ func (h *authHandler) Register(g *gin.Context) {
 func (h *authHandler) Login(g *gin.Context) {
 	var login dto.LoginRequest
 
-	err := g.ShouldBindJSON(&login);
+	err := g.ShouldBindJSON(&login)
 	if err != nil {
 		errorhandler.HandleError(g, &errorhandler.BadRequestError{Message: err.Error()})
 	}
 
-	result, err := h.service.Login(&login) 
-	if  err != nil {
+	result, err := h.service.Login(&login)
+	if err != nil {
 		errorhandler.HandleError(g, err)
 		return
 	}
 
 	res := helpers.Response(dto.ResponseParams{
 		StatusCode: http.StatusOK,
-		Message: "Login Success",
-		Data: result,
+		Message:    "Login Success",
+		Data:       result,
 	})
 
 	g.JSON(http.StatusOK, res)
