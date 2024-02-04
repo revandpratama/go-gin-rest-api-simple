@@ -29,6 +29,10 @@ func (s *authService) Register(req *dto.RegisterRequest) error {
 		return &errorhandler.BadRequestError{Message: "email already registered"}
 	}
 
+	if usernameExist := s.repository.UsernameExist(req.Username); usernameExist {
+		return &errorhandler.BadRequestError{Message: "username already registered"}
+	}
+
 	if req.Password != req.PasswordConfirmation {
 		return &errorhandler.BadRequestError{Message: "Password not match"}
 	}
@@ -41,6 +45,7 @@ func (s *authService) Register(req *dto.RegisterRequest) error {
 	user := entity.User{
 		Name:     req.Name,
 		Email:    req.Email,
+		Username: req.Username,
 		Password: passwordHash,
 		Gender:   req.Gender,
 	}
