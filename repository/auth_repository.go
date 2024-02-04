@@ -11,6 +11,7 @@ type AuthRepository interface {
 	EmailExist(email string) bool
 	Register(req *entity.User) error
 	GetUserByEmail(email string) (*entity.User, error)
+	UsernameExist(username string) bool
 }
 
 type authRepository struct {
@@ -27,6 +28,13 @@ func (r *authRepository) EmailExist(email string) bool {
 	var user entity.User
 
 	err := r.db.First(&user, "email = ?", email).Error
+
+	return err == nil
+}
+
+func (r *authRepository) UsernameExist(username string) bool {
+	var user entity.User
+	err := r.db.First(&user, "username = ?", username).Error
 
 	return err == nil
 }
