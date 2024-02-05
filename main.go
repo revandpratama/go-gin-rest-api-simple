@@ -19,6 +19,7 @@ func main() {
 
 	routes.AuthRouter(api);
 	routes.PostRouter(api);
+	routes.UserRouter(api)
 
 	api.GET("/test", Index)
 
