@@ -9,7 +9,7 @@ import (
 
 type PostService interface {
 	Create(req *dto.PostRequest) error
-	GetAll(id int) (*[]dto.PostResponse, error)
+	GetAll(username string) (*[]dto.PostResponse, error)
 	Show(postUsername string, postId int) (*dto.PostResponse, error)
 }
 
@@ -39,10 +39,10 @@ func (s *postService) Create(req *dto.PostRequest) error {
 	return nil
 }
 
-func (s *postService) GetAll(userId int) (*[]dto.PostResponse, error) {
+func (s *postService) GetAll(username string) (*[]dto.PostResponse, error) {
 	var res []dto.PostResponse
-	user, err := s.repository.GetUserById(userId)
-	posts, err := s.repository.GetPostByUser(userId)
+	user, err := s.repository.GetUserByUsername(username)
+	posts, err := s.repository.GetPostByUser(user.Id)
 	if err != nil {
 		return nil, &errorhandler.NotFoundError{Message: err.Error()}
 	}
@@ -66,14 +66,14 @@ func (s *postService) GetAll(userId int) (*[]dto.PostResponse, error) {
 	return &res, nil
 }
 
-func (s *postService) Show(postUsername string, postId int) (*dto.PostResponse, error) {
+func (s *postService) Show(username string, postId int) (*dto.PostResponse, error) {
 	var res dto.PostResponse
-	post, err := s.repository.GetPostById(postUsername, postId)
+	post, err := s.repository.GetPostById(username, postId)
 	if err != nil {
 		return nil, &errorhandler.NotFoundError{Message: err.Error()}
 	}
 
-	user, err := s.repository.GetUserById(post.UserID)
+	user, err := s.repository.GetUserByUsername(username)
 	res = dto.PostResponse{
 		ID:     post.ID,
 		UserID: post.UserID,

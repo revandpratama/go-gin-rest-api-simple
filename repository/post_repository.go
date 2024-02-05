@@ -9,7 +9,7 @@ import (
 type PostRepository interface {
 	Create(post *entity.Post) error
 	GetPostByUser(userId int) (*[]entity.Post, error)
-	GetUserById(userId int) (*entity.User, error)
+	GetUserByUsername(username string) (*entity.User, error)
 	GetPostById(postUsername string, postId int) (*entity.Post, error)
 }
 
@@ -39,10 +39,10 @@ func (r *postRepository) GetPostByUser(userId int) (*[]entity.Post, error) {
 	return &post, nil
 }
 
-func (r *postRepository) GetUserById(userId int) (*entity.User, error) {
+func (r *postRepository) GetUserByUsername(username string) (*entity.User, error) {
 	var user entity.User
 
-	err := r.db.First(&user, "id = ?", userId).Error
+	err := r.db.First(&user, "username = ?", username).Error
 
 	return &user, err
 }

@@ -28,14 +28,14 @@ func NewPostHandler(s service.PostService) *postHandler {
 func (h *postHandler) All(g *gin.Context) {
 	// @Description get all posts byt user
 
-	// username := g.Param("username")
+	username := g.Param("username")
 
-	id, ok := g.Get("userID")
-	if !ok {
-		errorhandler.HandleError(g, &errorhandler.InternalServerError{Message: "Internal Server error"})
-		return
-	}
-	res, err := h.service.GetAll(id.(int))
+	// id, ok := g.Get("userID")
+	// if !ok {
+	// 	errorhandler.HandleError(g, &errorhandler.InternalServerError{Message: "Internal Server error"})
+	// 	return
+	// }
+	res, err := h.service.GetAll(username)
 	if err != nil {
 		errorhandler.HandleError(g, &errorhandler.NotFoundError{Message: err.Error()})
 		return
