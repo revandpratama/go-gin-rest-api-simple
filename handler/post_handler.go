@@ -35,7 +35,7 @@ func (h *postHandler) All(g *gin.Context) {
 	// 	errorhandler.HandleError(g, &errorhandler.InternalServerError{Message: "Internal Server error"})
 	// 	return
 	// }
-	res, err := h.service.GetAll(username)
+	res, err := h.service.GetAllByUser(username)
 	if err != nil {
 		errorhandler.HandleError(g, &errorhandler.NotFoundError{Message: err.Error()})
 		return
@@ -98,4 +98,42 @@ func (h *postHandler) Show(g *gin.Context) {
 	}
 
 	g.JSON(http.StatusOK, post)
+}
+
+func (h *postHandler) GetAll(g *gin.Context) {
+	rawCurrentPage := g.Query("page")
+
+	if rawCurrentPage == "0" || rawCurrentPage == "" {
+		rawCurrentPage = "1"
+	}
+
+	currentPage, _ := strconv.Atoi(rawCurrentPage)
+
+	totalData, perPage, totalPage, _, err := h.service.SetPagination()
+	if err != nil {
+		errorhandler.HandleError(g, err)
+		return
+	}
+
+	pagination := &dto.Paginate{
+		Page: currentPage,
+		PerPage:   perPage,
+		Total: totalData,
+		TotalPage: totalPage,
+	}
+
+	posts, err := h.service.GetAll(pagination)
+	if err != nil {
+		errorhandler.HandleError(g, err)
+		return
+	}
+
+	res := helpers.Response(dto.ResponseParams{
+		StatusCode: 200,
+		Message:    "Success retrieve all post",
+		Paginate:   pagination,
+		Data:       posts,
+	})
+
+	g.JSON(http.StatusOK, res)
 }
