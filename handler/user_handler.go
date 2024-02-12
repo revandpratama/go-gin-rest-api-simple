@@ -42,3 +42,30 @@ func (h *userHandler) EditUser(g *gin.Context) {
 
 	g.JSON(http.StatusOK, res)
 }
+
+func (h *userHandler) DeleteUser(g *gin.Context) {
+	username := g.Param("username")
+
+	authenticatedUserId := g.GetInt("userID")
+
+	// user, err := h.service.GetUser(username)
+	// if err != nil {
+	// 	errorhandler.HandleError(g, &errorhandler.NotFoundError{Message: "User not found"})
+	// 	return
+	// }
+
+	user, err := h.service.DeleteUser(username, authenticatedUserId) 
+	if err != nil {
+		errorhandler.HandleError(g, err)
+		return
+	}
+
+	res := helpers.Response(dto.ResponseParams{
+		StatusCode: 200,
+		Message:    "Used  deleted successfully.",
+		Data:       user,
+	})
+
+	g.JSON(http.StatusOK, res)
+
+}

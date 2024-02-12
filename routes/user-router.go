@@ -20,4 +20,6 @@ func UserRouter(api *gin.RouterGroup) {
 	user.Use(middleware.JWTMiddleware())
 
 	user.PATCH("/edit", userHandler.EditUser)
+	user.DELETE("/", userHandler.DeleteUser)
 }
+
